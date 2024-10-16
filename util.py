@@ -22,6 +22,8 @@ def extract_product_info(soup, book_url, scrape_images=False):
     """Extracts product information from the soup object."""
     product_title = soup.find("div", {"class": "product_main"}).find("h1").text
     product_description = soup.findAll("p")[3].text
+    product_genre = soup.findAll("li")[2].find("a").text
+
     info_body_TRs = soup.find("table").findAll("td")
 
     info_UPC = info_body_TRs[0].text
@@ -48,6 +50,7 @@ def extract_product_info(soup, book_url, scrape_images=False):
         "product_title": product_title,
         "product_description": product_description,
         "UPC": info_UPC,
+        "product_genre": product_genre,
         "ProductType": info_product_type,
         "PriceExclTax": info_price_excltax,
         "PriceInclTax": info_price_incltax,
@@ -97,33 +100,35 @@ def write_product_to_csv(file_path, product_info, write_mode = "w"):
     with open(file_path, write_mode, newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow([
-            "Product Title", "Product Description", "UPC", 
+            "Product Title", "Product Description", "UPC", "Genre",
             "Product Type", "Price Excl. Tax", "Price Incl. Tax", 
-            "Tax", "Availability", "Number Of Reviews", "Star Rating"
+            "Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"
         ])
         writer.writerow([
             product_info["product_title"], product_info["product_description"], 
-            product_info["UPC"], product_info["ProductType"],
-            product_info["PriceExclTax"], product_info["PriceInclTax"],
-            product_info["Tax"], product_info["Availability"], 
-            product_info["NumberOfReviews"], product_info["StarRating"]
+            product_info["UPC"], product_info["product_genre"], 
+            product_info["ProductType"], product_info["PriceExclTax"], 
+            product_info["PriceInclTax"], product_info["Tax"], 
+            product_info["Availability"], product_info["NumberOfReviews"], 
+            product_info["StarRating"], product_info["URL"]
         ])
 
 def write_category_to_csv(category_path, category_books, write_mode = "w"):
     with open(category_path, write_mode, newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow([
-            "Product Title", "Product Description", "UPC", 
+            "Product Title", "Product Description", "UPC", "Genre",
             "Product Type", "Price Excl. Tax", "Price Incl. Tax", 
-            "Tax", "Availability", "Number Of Reviews", "Star Rating"
+            "Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"
         ])
         for product_info in category_books:
             writer.writerow([
                         product_info["product_title"], product_info["product_description"], 
-                        product_info["UPC"], product_info["ProductType"],
-                        product_info["PriceExclTax"], product_info["PriceInclTax"],
-                        product_info["Tax"], product_info["Availability"], 
-                        product_info["NumberOfReviews"], product_info["StarRating"]
+                        product_info["UPC"], product_info["product_genre"], 
+                        product_info["ProductType"], product_info["PriceExclTax"], 
+                        product_info["PriceInclTax"], product_info["Tax"], 
+                        product_info["Availability"], product_info["NumberOfReviews"], 
+                        product_info["StarRating"], product_info["URL"]
                     ])
 
 
