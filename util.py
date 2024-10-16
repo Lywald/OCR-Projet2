@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import time
 import sys
 import csv
 import os
@@ -44,14 +46,48 @@ def extract_product_info(soup):
         "StarRating": info_star_rating
     }
 
+def extract_category(category_name, category_url, category_soup):
+    book_list = []
+    booksProcessedQuantity = 0
+
+    with open(f"csv/categories/{category_name}.csv", "w", newline='', encoding='utf-8') as csvFile:
+        response = requests.get(category_url)
+        while response.ok:
+            #category_soup = BeautifulSoup(response.text, 'lxml')
+            books_pods = category_soup.findAll("article")
+            for book_pod in books_pods:
+                time.sleep(0.3)
+                book_url = urljoin(category_url, book_pod.find("a")["href"])
+                #response_book = requests.get(book_url)
+                book_soup = url_to_soup(book_url)
+                if book_soup is not None:
+                    latest_book_infos = extract_product_info(book_soup)
+                    book_list.append(latest_book_infos)
+                    print(book_url + "\n")
+                    booksProcessedQuantity += 1
+                    print("Processed " + booksProcessedQuantity + " from category: " + category_name)
+                    
+            has_next_page = category_soup.find("li", {"class": "next"})
+            if has_next_page is not None:
+                next_A = has_next_page.find('a')["href"]
+                absolute_next_URL = urljoin(category_url, next_A)
+                print("Absolute Next URL : " + absolute_next_URL)
+                response = requests.get(absolute_next_URL)
+                category_soup = url_to_soup(absolute_next_URL)
+            else:
+                break
+
+        return book_list
+
+
 def write_product_to_csv(file_path, product_info, write_mode = "w"):
     """Writes product information to a CSV file."""
     with open(file_path, write_mode, newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow([
-            "product_title", "product_description", "UPC", 
-            "ProductType", "PriceExclTax", "PriceInclTax", 
-            "Tax", "Availability", "NumberOfReviews", "StarRating"
+            "Product Title", "Product Description", "UPC", 
+            "Product Type", "Price Excl. Tax", "Price Incl. Tax", 
+            "Tax", "Availability", "Number Of Reviews", "Star Rating"
         ])
         writer.writerow([
             product_info["product_title"], product_info["product_description"], 
@@ -60,3 +96,24 @@ def write_product_to_csv(file_path, product_info, write_mode = "w"):
             product_info["Tax"], product_info["Availability"], 
             product_info["NumberOfReviews"], product_info["StarRating"]
         ])
+
+def write_category_to_csv(category_path, category_books, write_mode = "w"):
+    with open(category_path, write_mode, newline='', encoding='utf-8') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow([
+            "Product Title", "Product Description", "UPC", 
+            "Product Type", "Price Excl. Tax", "Price Incl. Tax", 
+            "Tax", "Availability", "Number Of Reviews", "Star Rating"
+        ])
+        for product_info in category_books:
+            writer.writerow([
+                        product_info["product_title"], product_info["product_description"], 
+                        product_info["UPC"], product_info["ProductType"],
+                        product_info["PriceExclTax"], product_info["PriceInclTax"],
+                        product_info["Tax"], product_info["Availability"], 
+                        product_info["NumberOfReviews"], product_info["StarRating"]
+                    ])
+
+
+
+    
