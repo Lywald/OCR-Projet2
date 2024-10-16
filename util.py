@@ -8,15 +8,11 @@ import os
 
 def url_to_soup(url):
     response = requests.get(url)
-
     if response.ok:
         print(response.text)
         soup = BeautifulSoup(response.text, 'lxml')
         return soup
     return None
-
-def scrape_book_data(soup):
-    return
 
 def extract_product_info(soup, book_url, scrape_images=False):
     """Extracts product information from the soup object."""
