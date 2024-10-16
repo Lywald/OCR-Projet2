@@ -7,34 +7,35 @@ import time
 import os
 
 from one_category import scrape_one_category
-
+from util import url_to_soup
 
 # Specify the directory path
 directory_path = "csv"
 # Create the directory if it doesn't exist
 os.makedirs(directory_path, exist_ok=True)
+os.makedirs("images", exist_ok=True)
 
-def scrape_whole_site():
+def scrape_whole_site(scrape_images=False):
     base_URL = 'https://books.toscrape.com/catalogue/category/books_1/index.html'
     category_url = 'https://books.toscrape.com/catalogue/category/books/travel_2/index.html'
     urlPage = 0
     url = 'none'
 
-    categURLs = []
+    categories_URLs = []
 
-    responseCategory = requests.get(base_URL)
-    categSoup = BeautifulSoup(responseCategory.text, 'lxml')
-    categNav = categSoup.find("ul", {"class":"nav-list"})
-    categHrefs = categNav.findAll("a")[1:]
+    front_page_response = requests.get(base_URL)
+    front_page_soup = BeautifulSoup(front_page_response.text, 'lxml')
+    categories_navigation_panel = front_page_soup.find("ul", {"class":"nav-list"})
+    categories_hrefs = categories_navigation_panel.findAll("a")[1:]
 
+    for category in categories_hrefs:
+        categories_URLs.append(urljoin(base_URL, category["href"]))
 
-    for categ in categHrefs:
-        categURLs.append(urljoin(base_URL, categ["href"]))
+    print(str(categories_URLs))
 
-    print(str(categURLs))
+    for category_URL in categories_URLs:
+        scrape_one_category(category_URL, scrape_images)
 
-for categURL in categURLs:
-    scrape_one_category(categURL)
 
 """for categURL in categURLs:
     category_url = categURL

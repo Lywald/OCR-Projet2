@@ -18,7 +18,7 @@ def url_to_soup(url):
 def scrape_book_data(soup):
     return
 
-def extract_product_info(soup):
+def extract_product_info(soup, book_url, scrape_images=False):
     """Extracts product information from the soup object."""
     product_title = soup.find("div", {"class": "product_main"}).find("h1").text
     product_description = soup.findAll("p")[3].text
@@ -33,6 +33,17 @@ def extract_product_info(soup):
     info_reviews = info_body_TRs[6].text
     info_star_rating = soup.find("p", {"class": "star-rating"}).get('class')[1]
 
+    if (scrape_images):
+        picURL = soup.find("img")["src"]
+        picFullURL = urljoin(book_url, picURL)
+        picDL = requests.get(picFullURL)
+        if picDL.status_code == 200:
+            print("Image downloaded successfully!")
+            with open(f"images/{info_UPC}.jpg", "wb") as imgFile:
+                imgFile.write(picDL.content)
+        else:
+            print("Failed to download image.")
+
     return {
         "product_title": product_title,
         "product_description": product_description,
@@ -43,10 +54,11 @@ def extract_product_info(soup):
         "Tax": info_tax,
         "Availability": info_availability,
         "NumberOfReviews": info_reviews,
-        "StarRating": info_star_rating
+        "StarRating": info_star_rating,
+        "URL": book_url
     }
 
-def extract_category(category_name, category_url, category_soup):
+def extract_category(category_name, category_url, category_soup, scrape_images=False):
     book_list = []
     booksProcessedQuantity = 0
 
@@ -61,11 +73,11 @@ def extract_category(category_name, category_url, category_soup):
                 #response_book = requests.get(book_url)
                 book_soup = url_to_soup(book_url)
                 if book_soup is not None:
-                    latest_book_infos = extract_product_info(book_soup)
+                    latest_book_infos = extract_product_info(book_soup, book_url, scrape_images)
                     book_list.append(latest_book_infos)
                     print(book_url + "\n")
                     booksProcessedQuantity += 1
-                    print("Processed " + booksProcessedQuantity + " from category: " + category_name)
+                    print("Processed " + str(booksProcessedQuantity) + " from category: " + category_name)
                     
             has_next_page = category_soup.find("li", {"class": "next"})
             if has_next_page is not None:

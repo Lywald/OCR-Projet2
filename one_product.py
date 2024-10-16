@@ -38,11 +38,11 @@ def scrape_one_product(url = 'https://books.toscrape.com/catalogue/a-light-in-th
     soup = url_to_soup(url)
 
     if soup is not None:
-        product_infos = extract_product_info(soup)
+        product_infos = extract_product_info(soup, url)
         print(product_infos)
         write_product_to_csv(f"csv/books/{product_infos['UPC']}.csv", product_infos, "w")
         return product_infos
-        
+
     return None
 
 
