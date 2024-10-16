@@ -3,3 +3,5 @@
 /_csv
 /_images
 comments.txt
+/__pycache__
+testCSV.csv

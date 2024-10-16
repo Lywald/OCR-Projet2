@@ -6,6 +6,8 @@ import csv
 import time
 import os
 
+from util import url_to_soup, extract_product_info
+
 # Specify the directory path
 directory_path = "csv"
 # Create the directory if it doesn't exist
