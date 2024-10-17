@@ -5,12 +5,14 @@ OpenClassRooms Project 2
 # Description
 
 We convert this website's books data into CSV files with the following columns:
-"Product Title", "Product Description", "UPC", "Genre",
-"Product Type", "Price Excl. Tax", "Price Incl. Tax", 
-"Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"
+
+*"Product Title", "Product Description", "UPC", "Genre",*
+*"Product Type", "Price Excl. Tax", "Price Incl. Tax", *
+*"Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"*
 
 The code is launched with the command:
-python -m main
+
+*python -m main*
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
 
