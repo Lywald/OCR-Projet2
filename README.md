@@ -11,11 +11,19 @@ We convert this website's books data into CSV files with the following columns:
 *"Product Type", "Price Excl. Tax", "Price Incl. Tax", *
 *"Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"*
 
-The code is launched with the command:
+The project is launched with the commands:
 
-*pip install -r requirements.txt*
+1. *pip install virtualenv*
 
-*python -m main*
+2. *virtualenv bookscraping*
+
+3. *bookscraping\Scripts\activate*
+
+4. *pip install -r requirements.txt*
+
+5. *python -m main*
+
+6. *deactivate*
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
 
