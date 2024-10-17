@@ -19,7 +19,7 @@ The code is launched with the command:
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
 
-The output is located in "csv" and "images" subfolders. The finale data is provided in p2.rar
+The output is located in "csv" and "images" subfolders. 
 
 # Project structure
 
