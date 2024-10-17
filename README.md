@@ -13,6 +13,8 @@ We convert this website's books data into CSV files with the following columns:
 
 The code is launched with the command:
 
+*pip install -r requirements.txt*
+
 *python -m main*
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
