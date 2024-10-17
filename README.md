@@ -1,5 +1,6 @@
 # OCR-Projet2
 Scraping of http://books.toscrape.com/
+
 OpenClassRooms Project 2
 
 # Description
@@ -16,7 +17,7 @@ The code is launched with the command:
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
 
-The output is located in "csv" and "images" subfolders.
+The output is located in "csv" and "images" subfolders. The finale data is provided in p2.rar
 
 # Project structure
 
