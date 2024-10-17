@@ -18,21 +18,21 @@ The output is located in "csv" and "images" subfolders.
 
 # Project structure
 
-main.py
-|__ main()
+main.py  
+├── main()
 
-one_product.py
-|__ scrape_one_product
+one_product.py  
+├── scrape_one_product
 
-one_category.py
-|__ scrape_one_category
+one_category.py  
+├── scrape_one_category
 
-all_categories.py
-|__ scrape_whole_site
+all_categories.py  
+├── scrape_whole_site
 
-util.py
-|__ url_to_soup
-|__ extract_product_info
-|__ extract_category
-|__ write_product_to_csv
-|__ write_category_to_csv
+util.py  
+├── url_to_soup  
+├── extract_product_info  
+├── extract_category  
+├── write_product_to_csv  
+└── write_category_to_csv
