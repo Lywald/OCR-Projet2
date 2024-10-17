@@ -32,13 +32,13 @@ def extract_product_info(soup, book_url, scrape_images=False):
     info_star_rating = soup.find("p", {"class": "star-rating"}).get('class')[1]
 
     if (scrape_images):
-        picURL = soup.find("img")["src"]
-        picFullURL = urljoin(book_url, picURL)
-        picDL = requests.get(picFullURL)
-        if picDL.status_code == 200:
+        pic_URL = soup.find("img")["src"]
+        pic_full_URL = urljoin(book_url, pic_URL)
+        pic_DL = requests.get(pic_full_URL)
+        if pic_DL.status_code == 200:
             print("Image downloaded successfully!")
-            with open(f"images/{info_UPC}.jpg", "wb") as imgFile:
-                imgFile.write(picDL.content)
+            with open(f"images/{info_UPC}.jpg", "wb") as img_file:
+                img_file.write(pic_DL.content)
         else:
             print("Failed to download image.")
 
