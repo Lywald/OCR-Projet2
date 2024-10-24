@@ -11,19 +11,26 @@ We convert this website's books data into CSV files with the following columns:
 *"Product Type", "Price Excl. Tax", "Price Incl. Tax", *
 *"Tax", "Availability", "Number Of Reviews", "Star Rating", "URL"*
 
-The project is launched with the commands:
+First, configurate main.py at this line:
 
-1. *pip install virtualenv*
+    config = Config(debug_mode=False, demo_mode=False, scraping_images=True)
+* Debug_mode : Display verbose scraping information
+* Demo_mode: Scrape only a few books 
+* Scraping_images: Scrape pictures into the ./images folder
 
-2. *virtualenv bookscraping*
+Then, the project is launched with those commands:
 
-3. *bookscraping\Scripts\activate*
+    pip install virtualenv
 
-4. *pip install -r requirements.txt*
+    virtualenv bookscraping
 
-5. *python -m main*
+    bookscraping\Scripts\activate
 
-6. *deactivate*
+    pip install -r requirements.txt
+
+    python -m main
+
+    deactivate
 
 Each script builds on the previous, and each script uses imported util.py utilitary functions. 
 
