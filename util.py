@@ -6,15 +6,16 @@ import sys
 import csv
 import os
 
-def url_to_soup(url):
+def url_to_soup(url, config):
     response = requests.get(url)
     if response.ok:
-        print(response.text)
+        if config.DEBUG_MODE:
+            print(response.text)
         soup = BeautifulSoup(response.text, 'lxml')
         return soup
     return None
 
-def extract_product_info(soup, book_url, scrape_images=False):
+def extract_product_info(soup, book_url, config):
     """Extracts product information from the soup object."""
     product_title = soup.find("div", {"class": "product_main"}).find("h1").text
     product_description = soup.findAll("p")[3].text
@@ -31,16 +32,18 @@ def extract_product_info(soup, book_url, scrape_images=False):
     info_reviews = info_body_TRs[6].text
     info_star_rating = soup.find("p", {"class": "star-rating"}).get('class')[1]
 
-    if (scrape_images):
+    if config.SCRAPING_IMAGES:
         pic_URL = soup.find("img")["src"]
         pic_full_URL = urljoin(book_url, pic_URL)
         pic_DL = requests.get(pic_full_URL)
         if pic_DL.status_code == 200:
-            print("Image downloaded successfully!")
+            if config.DEBUG_MODE:
+                print("Image downloaded successfully!")
             with open(f"images/{info_UPC}.jpg", "wb") as img_file:
                 img_file.write(pic_DL.content)
         else:
-            print("Failed to download image.")
+            if config.DEBUG_MODE:
+                print("Failed to download image.")
 
     return {
         "product_title": product_title,
@@ -57,7 +60,7 @@ def extract_product_info(soup, book_url, scrape_images=False):
         "URL": book_url
     }
 
-def extract_category(category_name, category_url, category_soup, scrape_images=False):
+def extract_category(category_name, category_url, category_soup, config):
     book_list = []
     booksProcessedQuantity = 0
 
@@ -70,21 +73,26 @@ def extract_category(category_name, category_url, category_soup, scrape_images=F
                 time.sleep(0.3)
                 book_url = urljoin(category_url, book_pod.find("a")["href"])
                 #response_book = requests.get(book_url)
-                book_soup = url_to_soup(book_url)
+                book_soup = url_to_soup(book_url, config)
                 if book_soup is not None:
-                    latest_book_infos = extract_product_info(book_soup, book_url, scrape_images)
+                    latest_book_infos = extract_product_info(book_soup, book_url, config)
                     book_list.append(latest_book_infos)
-                    print(book_url + "\n")
+                    if config.DEBUG_MODE:
+                        print(book_url + "\n")
                     booksProcessedQuantity += 1
                     print("Processed " + str(booksProcessedQuantity) + " from category: " + category_name)
+
+                    if config.DEMO_MODE and booksProcessedQuantity >= 5:
+                        break # Scraping maximum 5 books in Demo Mode
                     
             has_next_page = category_soup.find("li", {"class": "next"})
             if has_next_page is not None:
                 next_A = has_next_page.find('a')["href"]
                 absolute_next_URL = urljoin(category_url, next_A)
-                print("Absolute Next URL : " + absolute_next_URL)
+                if config.DEBUG_MODE:
+                    print("Absolute Next URL : " + absolute_next_URL)
                 response = requests.get(absolute_next_URL)
-                category_soup = url_to_soup(absolute_next_URL)
+                category_soup = url_to_soup(absolute_next_URL, config)
             else:
                 break
 

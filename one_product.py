@@ -26,15 +26,17 @@ import sys
 import csv
 import os
 
-directory_path = "csv"
-# Create the directory if it doesn't exist
-os.makedirs(directory_path, exist_ok=True)
 
-def scrape_one_product(url = 'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'):
-    soup = url_to_soup(url)
+def scrape_one_product(url, config):
+    directory_path = "csv"
+    # Create the directory if it doesn't exist
+    os.makedirs(directory_path, exist_ok=True)
+
+    soup = url_to_soup(url, config)
     if soup is not None:
-        product_infos = extract_product_info(soup, url)
-        print(product_infos)
+        product_infos = extract_product_info(soup, url, config)
+        if config.DEBUG_MODE:
+            print(product_infos)
         write_product_to_csv(f"csv/books/{product_infos['UPC']}.csv", product_infos, "w")
         return product_infos
     return None
