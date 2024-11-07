@@ -1,3 +1,14 @@
+"""
+Utilities for scraping and saving product and category data as CSV files.
+
+Functions:
+- `url_to_soup`: Fetches HTML from a URL and converts it to a BeautifulSoup object.
+- `extract_product_info`: Extracts product details like title, price, and availability.
+- `extract_category`: Scrapes all products in a category and saves them as a list of dictionaries.
+- `write_product_to_csv`: Saves a single product's data to a CSV file.
+- `write_category_to_csv`: Saves an entire category's products to a CSV file.
+"""
+
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -7,6 +18,17 @@ import csv
 import os
 
 def url_to_soup(url, config):
+    """
+    Fetches the HTML content of a URL and converts it to a BeautifulSoup object.
+
+    Args:
+        url (str): The URL of the page to scrape.
+        config (Config): Configuration for debugging and demo mode.
+
+    Returns:
+        BeautifulSoup: Parsed HTML content if successful, or None if failed.
+    """
+
     response = requests.get(url)
     if response.ok:
         if config.DEBUG_MODE:
@@ -16,7 +38,18 @@ def url_to_soup(url, config):
     return None
 
 def extract_product_info(soup, book_url, config):
-    """Extracts product information from the soup object."""
+    """
+    Extracts details of a product (title, description, price, etc.) from a soup object.
+
+    Args:
+        soup (BeautifulSoup): Parsed HTML content of the product page.
+        book_url (str): URL of the product.
+        config (Config): Configuration for debugging and image scraping.
+
+    Returns:
+        dict: A dictionary with extracted product details.
+    """
+
     product_title = soup.find("div", {"class": "product_main"}).find("h1").text
     product_description = soup.findAll("p")[3].text
     product_genre = soup.findAll("li")[2].find("a").text
@@ -61,6 +94,19 @@ def extract_product_info(soup, book_url, config):
     }
 
 def extract_category(category_name, category_url, category_soup, config):
+    """
+    Scrapes all products in a given category and returns them as a list of dictionaries.
+
+    Args:
+        category_name (str): Name of the category.
+        category_url (str): URL of the category page.
+        category_soup (BeautifulSoup): Parsed HTML of the category page.
+        config (Config): Configuration settings for scraping.
+
+    Returns:
+        list of dict: List of product information dictionaries.
+    """
+
     book_list = []
     booksProcessedQuantity = 0
 
@@ -100,7 +146,15 @@ def extract_category(category_name, category_url, category_soup, config):
 
 
 def write_product_to_csv(file_path, product_info, write_mode = "w"):
-    """Writes product information to a CSV file."""
+    """
+    Writes a single product's information to a CSV file.
+
+    Args:
+        file_path (str): Path to the CSV file.
+        product_info (dict): Product data to write.
+        write_mode (str): File write mode, default is "w".
+    """
+
     with open(file_path, write_mode, newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow([
@@ -118,6 +172,15 @@ def write_product_to_csv(file_path, product_info, write_mode = "w"):
         ])
 
 def write_category_to_csv(category_path, category_books, write_mode = "w"):
+    """
+    Writes a list of products in a category to a CSV file.
+
+    Args:
+        category_path (str): Path to the CSV file.
+        category_books (list of dict): List of product data dictionaries.
+        write_mode (str): File write mode, default is "w".
+    """
+
     with open(category_path, write_mode, newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow([
@@ -133,8 +196,4 @@ def write_category_to_csv(category_path, category_books, write_mode = "w"):
                         product_info["PriceInclTax"], product_info["Tax"], 
                         product_info["Availability"], product_info["NumberOfReviews"], 
                         product_info["StarRating"], product_info["URL"]
-                    ])
-
-
-
-    
+                    ])    
